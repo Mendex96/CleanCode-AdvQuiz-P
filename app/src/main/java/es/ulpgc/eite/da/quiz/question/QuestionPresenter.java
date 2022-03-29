@@ -79,14 +79,19 @@ public class QuestionPresenter implements QuestionContract.Presenter {
   public void onOptionButtonClicked(int option) {
     Log.e(TAG, "onOptionButtonClicked()");
 
-    //TODO: falta implementacion
-
+    state.option = option;
+    enableNextButton();
+    state.optionClicked = true;
+    state.optionEnabled = false;
     boolean isCorrect = model.isCorrectOption(option);
     if(isCorrect) {
       state.cheatEnabled=false;
+
     } else {
       state.cheatEnabled=true;
     }
+    view.get().displayQuestion(state);
+    view.get().updateReply(isCorrect);
 
   }
 
@@ -94,14 +99,25 @@ public class QuestionPresenter implements QuestionContract.Presenter {
   public void onNextButtonClicked() {
     Log.e(TAG, "onNextButtonClicked()");
 
-    //TODO: falta implementacion
+
   }
 
   @Override
   public void onCheatButtonClicked() {
     Log.e(TAG, "onCheatButtonClicked()");
+    QuestionToCheatState questionToCheatState = new QuestionToCheatState();
+    boolean isCorrect = model.isCorrectOption(1);
+    if(isCorrect)
+    {
+      questionToCheatState.answer = state.option1;
+    }else if(model.isCorrectOption(2)){
+      questionToCheatState.answer = state.option2;
+    }else{
+      questionToCheatState.answer = state.option3;
+    }
 
-    //TODO: falta implementacion
+    mediator.setQuestionToCheatState(questionToCheatState);
+    view.get().navigateToCheatScreen();
   }
 
   private void passStateToCheatScreen(QuestionToCheatState state) {
